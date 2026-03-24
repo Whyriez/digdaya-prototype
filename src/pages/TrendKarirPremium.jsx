@@ -17,7 +17,7 @@ const TrendKarirPremium = () => {
       description: 'Banyak perusahaan mulai bermigrasi ke UI deklaratif lintas platform untuk menghemat cost development native.',
       icon: 'fas fa-mobile-alt',
       theme: 'blue',
-      actionText: 'Mulai Pelatihan (Gratis Premium)'
+      actionText: 'Mulai Pelatihan'
     },
     {
       id: 2,
