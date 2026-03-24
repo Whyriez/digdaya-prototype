@@ -12,6 +12,7 @@ import CariLowongan from "./pages/CariLowongan";
 import PelatihanSaya from "./pages/PelatihanSaya";
 import ProfilPortofolio from "./pages/ProfilPortfolio";
 import CariLowonganPublic from "./pages/CariLowonganPublic";
+import TrendKarirPremium from "./pages/TrendKarirPremium";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="/profil" element={<ProfilPortofolio />} />
 
         <Route path="/cari-lowongan-public" element={<CariLowonganPublic />} />
+        <Route path="/trend-karir" element={<TrendKarirPremium />} />
 
         <Route path="/hr" element={<HRDashboard />} />
         <Route path="/ats-config" element={<ATSConfig />} />

@@ -93,7 +93,7 @@ const SidebarUser = ({ isOpen, setIsOpen }) => {
               className={`fas fa-file-pdf w-5 h-5 mr-3 text-center ${isActive("/candidate") ? "" : "text-slate-400 group-hover:text-blue-500 transition"}`}
             ></i>
             <span
-              className={`text-sm ${isActive("/upload") ? "font-semibold" : "font-medium"}`}
+              className={`text-sm ${isActive("/candidate") ? "font-semibold" : "font-medium"}`}
             >
               Analisis CV (AI Scan)
             </span>
@@ -111,6 +111,22 @@ const SidebarUser = ({ isOpen, setIsOpen }) => {
             >
               Pelatihan Saya
             </span>
+          </Link>
+
+          {/* MENU BARU: Trend Karir Premium */}
+          <Link
+            to="/trend-karir"
+            className={`flex items-center px-3 py-2.5 rounded-lg group transition ${isActive("/trend-karir") ? "bg-indigo-50 text-indigo-700 border border-indigo-200" : "text-slate-600 hover:text-slate-900 hover:bg-indigo-50/50"}`}
+          >
+            <i
+              className={`fas fa-chart-line w-5 h-5 mr-3 text-center ${isActive("/trend-karir") ? "text-indigo-600" : "text-slate-400 group-hover:text-indigo-500 transition"}`}
+            ></i>
+            <span
+              className={`text-sm flex-1 ${isActive("/trend-karir") ? "font-bold" : "font-medium group-hover:font-semibold"}`}
+            >
+              Market Insights
+            </span>
+            <i className="fas fa-crown text-amber-400 text-xs" title="Fitur Premium"></i>
           </Link>
 
           <p className="px-2 text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 mt-8">
@@ -133,18 +149,21 @@ const SidebarUser = ({ isOpen, setIsOpen }) => {
 
         {/* User Profile Info */}
         <div className="p-4 border-t border-slate-100 bg-slate-50/50">
-          <div className="flex items-center px-3 py-2.5 rounded-lg bg-white border border-slate-200 shadow-sm hover:border-slate-300 transition cursor-pointer">
+          <div className="flex items-center px-3 py-2.5 rounded-lg bg-white border border-slate-200 shadow-sm hover:border-slate-300 transition cursor-pointer relative overflow-hidden group">
+            {/* Efek gradient tipis saat dihover pada profil premium */}
+            <div className="absolute inset-0 bg-gradient-to-r from-indigo-50 to-purple-50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <img
               src="https://ui-avatars.com/api/?name=Nur+Alim&background=eff6ff&color=2563eb"
               alt="Profile"
-              className="w-8 h-8 rounded-full border border-slate-200 mr-3 shrink-0"
+              className="w-8 h-8 rounded-full border border-slate-200 mr-3 shrink-0 relative z-10"
             />
-            <div className="overflow-hidden">
+            <div className="overflow-hidden relative z-10">
               <p className="text-sm font-bold text-slate-800 leading-none truncate">
                 Nur Alim M. Suma
               </p>
-              <p className="text-[11px] text-slate-500 mt-1 font-medium truncate">
-                Pencari Kerja
+              {/* Status Member diubah menjadi Premium */}
+              <p className="text-[11px] text-indigo-600 mt-1 font-bold truncate flex items-center">
+                <i className="fas fa-crown text-amber-400 mr-1 text-[9px]"></i> Premium Member
               </p>
             </div>
           </div>
