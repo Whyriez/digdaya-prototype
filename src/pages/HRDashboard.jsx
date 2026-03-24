@@ -6,6 +6,9 @@ const HRDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   // State untuk mengontrol Sidebar di tampilan Mobile
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
+  // State BARU: Untuk menyimpan data kandidat yang sedang dilihat detailnya
+  const [selectedCandidate, setSelectedCandidate] = useState(null);
 
   // Data Dummy Kandidat
   const candidatesData = [
@@ -111,7 +114,7 @@ const HRDashboard = () => {
         </header>
 
         {/* Scrollable Body */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-8 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-8 custom-scrollbar relative">
           {/* Job Detail Header */}
           <div className="bg-white rounded-xl border border-slate-200 p-5 sm:p-6 shadow-sm mb-6 flex flex-col md:flex-row justify-between md:items-center">
             <div>
@@ -160,7 +163,7 @@ const HRDashboard = () => {
 
           {/* Candidate Table Section */}
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
-            {/* Table Toolbar (Responsive Stack) */}
+            {/* Table Toolbar */}
             <div className="p-4 sm:p-5 border-b border-slate-200 bg-white flex flex-col lg:flex-row justify-between lg:items-center space-y-4 lg:space-y-0">
               <h2 className="font-bold text-slate-800 text-sm flex items-center">
                 <div className="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center mr-3 border border-blue-100 shrink-0">
@@ -186,7 +189,7 @@ const HRDashboard = () => {
               </div>
             </div>
 
-            {/* Table (Horizontal Scrollable) */}
+            {/* Table */}
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse min-w-[800px]">
                 <thead>
@@ -258,12 +261,13 @@ const HRDashboard = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <Link
-                          to={candidate.isPersona ? "/candidate" : "#"}
+                        {/* TOMBOL REVIEW DIUBAH: Sekarang memicu state Modal */}
+                        <button
+                          onClick={() => setSelectedCandidate(candidate)}
                           className="text-blue-600 font-bold hover:text-blue-800 text-sm px-4 py-2 border border-transparent hover:border-blue-200 hover:bg-blue-50 rounded-lg transition inline-block"
                         >
                           Review
-                        </Link>
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -283,7 +287,7 @@ const HRDashboard = () => {
               </table>
             </div>
 
-            {/* Pagination (Responsive) */}
+            {/* Pagination */}
             <div className="p-4 border-t border-slate-200 bg-slate-50 flex flex-col sm:flex-row items-center justify-between text-sm text-slate-500 space-y-3 sm:space-y-0">
               <span className="font-medium text-center sm:text-left">
                 Menampilkan{" "}
@@ -316,6 +320,129 @@ const HRDashboard = () => {
             </div>
           </div>
         </div>
+
+        {/* MODAL DETAIL KANDIDAT */}
+        {selectedCandidate && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 backdrop-blur-sm bg-slate-900/60 transition-opacity">
+            <div className="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative">
+              
+              {/* Modal Header */}
+              <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 shrink-0">
+                <h3 className="text-lg font-bold text-slate-800 flex items-center">
+                  <i className="fas fa-address-card mr-2 text-blue-600"></i> Detail Profil Pelamar
+                </h3>
+                <button
+                  onClick={() => setSelectedCandidate(null)}
+                  className="text-slate-400 hover:text-slate-700 hover:bg-slate-200 w-8 h-8 rounded-full flex items-center justify-center transition"
+                >
+                  <i className="fas fa-times"></i>
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div className="p-6 overflow-y-auto custom-scrollbar flex-1 bg-white">
+                <div className="flex flex-col md:flex-row gap-8">
+                  {/* Kiri: Info Profil & Skor */}
+                  <div className="md:w-1/3 flex flex-col items-center text-center space-y-4">
+                    <img 
+                      src={selectedCandidate.avatar} 
+                      alt={selectedCandidate.name} 
+                      className={`w-32 h-32 rounded-full border-4 border-slate-100 shadow-md ${selectedCandidate.isPersona ? "grayscale-[20%]" : ""}`} 
+                    />
+                    <div>
+                      <h2 className="text-xl font-bold text-slate-900">{selectedCandidate.name}</h2>
+                      <p className="text-sm font-medium text-slate-500 mt-1">
+                         <i className="fas fa-briefcase text-slate-400 mr-1"></i> Melamar sbg Frontend Dev
+                      </p>
+                    </div>
+                    
+                    <div className="w-full h-px bg-slate-200 my-2"></div>
+                    
+                    {/* Visualisasi Skor AI */}
+                    <div className="flex flex-col items-center">
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Match Score AI</p>
+                      <div className={`flex flex-col items-center justify-center w-24 h-24 rounded-full border-[5px] shadow-sm bg-${selectedCandidate.statusTheme}-50 ${selectedCandidate.score >= 90 ? 'border-emerald-500' : selectedCandidate.score >= 80 ? 'border-blue-400' : 'border-amber-400'}`}>
+                        <span className={`text-3xl font-black ${selectedCandidate.score >= 90 ? 'text-emerald-700' : selectedCandidate.score >= 80 ? 'text-blue-700' : 'text-amber-700'}`}>
+                          {selectedCandidate.score}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Kanan: Skill, Dokumen, & Analisis */}
+                  <div className="md:w-2/3 space-y-6">
+                    {/* Ringkasan Analisis */}
+                    <div>
+                      <h4 className="text-sm font-bold text-slate-800 mb-3 flex items-center">
+                        <i className="fas fa-robot mr-2 text-blue-500"></i> Hasil Screening Otomatis
+                      </h4>
+                      <div className={`p-4 rounded-xl border bg-${selectedCandidate.statusTheme}-50 border-${selectedCandidate.statusTheme}-200`}>
+                        <div className="flex items-start">
+                          <i className={`fas ${selectedCandidate.statusIcon} text-${selectedCandidate.statusTheme}-600 mt-0.5 mr-3 text-lg`}></i>
+                          <div>
+                            <p className={`text-sm font-bold text-${selectedCandidate.statusTheme}-800 mb-1`}>
+                              {selectedCandidate.status}
+                            </p>
+                            <p className={`text-xs text-${selectedCandidate.statusTheme}-700 leading-relaxed`}>
+                              Berdasarkan parsing dokumen, kandidat ini memiliki kecocokan <strong>{selectedCandidate.score}%</strong> terhadap kriteria prioritas "React, Next.js, TypeScript, Tailwind".
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Skill Tags */}
+                    <div>
+                      <h4 className="text-sm font-bold text-slate-800 mb-3">Skill Terdeteksi dari CV</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedCandidate.skills.map((skill) => (
+                          <span key={skill} className="px-3 py-1.5 bg-blue-50 text-blue-700 border border-blue-100 rounded-lg text-sm font-semibold shadow-sm">
+                            <i className="fas fa-check-circle text-blue-400 mr-1.5"></i> {skill}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Lampiran */}
+                    <div>
+                      <h4 className="text-sm font-bold text-slate-800 mb-3">Dokumen Lampiran</h4>
+                      <div className="flex items-center justify-between p-3 border border-slate-200 rounded-xl bg-slate-50 hover:border-blue-300 hover:bg-blue-50 transition cursor-pointer group">
+                        <div className="flex items-center overflow-hidden">
+                          <div className="w-10 h-10 bg-red-100 text-red-500 rounded-lg flex items-center justify-center mr-3 shrink-0">
+                            <i className="fas fa-file-pdf text-lg"></i>
+                          </div>
+                          <div className="truncate">
+                            <p className="text-sm font-bold text-slate-800 group-hover:text-blue-700 truncate">{selectedCandidate.cv}</p>
+                            <p className="text-xs text-slate-500">File PDF • 1.2 MB</p>
+                          </div>
+                        </div>
+                        <button className="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 group-hover:text-blue-600 group-hover:border-blue-300 transition shrink-0 shadow-sm">
+                          <i className="fas fa-download"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="px-6 py-4 border-t border-slate-200 bg-slate-50 shrink-0 flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3">
+                <button
+                  onClick={() => setSelectedCandidate(null)}
+                  className="px-5 py-2.5 border border-slate-300 text-slate-700 rounded-xl text-sm font-bold hover:bg-white transition shadow-sm w-full sm:w-auto text-center"
+                >
+                  Tutup
+                </button>
+                <button className="px-5 py-2.5 bg-rose-50 text-rose-600 border border-rose-200 rounded-xl text-sm font-bold hover:bg-rose-100 transition shadow-sm w-full sm:w-auto text-center">
+                  <i className="fas fa-times mr-2"></i> Tolak
+                </button>
+                <button className="px-5 py-2.5 bg-blue-600 text-white border border-blue-700 rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-sm w-full sm:w-auto text-center">
+                  <i className="fas fa-envelope-open-text mr-2"></i> Loloskan & Undang
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

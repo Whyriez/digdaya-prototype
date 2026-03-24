@@ -9,7 +9,10 @@ const CariLowongan = () => {
   const [typeFilter, setTypeFilter] = useState('Semua Tipe');
   const [sortBy, setSortBy] = useState('Rekomendasi AI');
 
-  // Dummy Data Lowongan Pekerjaan
+  // State BARU: Untuk menyimpan data lowongan yang sedang dilihat detailnya
+  const [selectedJob, setSelectedJob] = useState(null);
+
+  // Dummy Data Lowongan Pekerjaan (ditambah field deskripsi singkat)
   const jobsData = [
     {
       id: 1,
@@ -23,7 +26,8 @@ const CariLowongan = () => {
       matchScore: 92,
       skills: ['React', 'Next.js', 'Tailwind'],
       logo: 'fas fa-laptop-code text-blue-500',
-      bgLogo: 'bg-blue-50 border-blue-100'
+      bgLogo: 'bg-blue-50 border-blue-100',
+      description: 'Kami mencari Frontend Developer yang bersemangat untuk membangun antarmuka pengguna yang interaktif dan responsif menggunakan React dan Next.js.'
     },
     {
       id: 2,
@@ -37,7 +41,8 @@ const CariLowongan = () => {
       matchScore: 88,
       skills: ['Flutter', 'Dart', 'Firebase'],
       logo: 'fas fa-mobile-alt text-emerald-500',
-      bgLogo: 'bg-emerald-50 border-emerald-100'
+      bgLogo: 'bg-emerald-50 border-emerald-100',
+      description: 'Bergabunglah dengan tim kami untuk mengembangkan aplikasi mobile inovatif menggunakan framework Flutter untuk platform iOS dan Android.'
     },
     {
       id: 3,
@@ -51,7 +56,8 @@ const CariLowongan = () => {
       matchScore: 85,
       skills: ['React Native', 'Redux', 'API'],
       logo: 'fas fa-code text-indigo-500',
-      bgLogo: 'bg-indigo-50 border-indigo-100'
+      bgLogo: 'bg-indigo-50 border-indigo-100',
+      description: 'Dibutuhkan segera React Native Engineer berpengalaman untuk mengelola dan mengembangkan fitur baru pada aplikasi e-commerce kami yang sedang berkembang pesat.'
     },
     {
       id: 4,
@@ -65,7 +71,8 @@ const CariLowongan = () => {
       matchScore: 45,
       skills: ['Figma', 'Prototyping', 'UI Design'],
       logo: 'fas fa-paint-brush text-rose-500',
-      bgLogo: 'bg-rose-50 border-rose-100'
+      bgLogo: 'bg-rose-50 border-rose-100',
+      description: 'Mencari desainer UI/UX yang kreatif untuk merancang pengalaman digital yang intuitif dan estetis untuk klien-klien kami.'
     },
     {
       id: 5,
@@ -79,7 +86,8 @@ const CariLowongan = () => {
       matchScore: 78,
       skills: ['Golang', 'PostgreSQL', 'Docker'],
       logo: 'fas fa-server text-amber-500',
-      bgLogo: 'bg-amber-50 border-amber-100'
+      bgLogo: 'bg-amber-50 border-amber-100',
+      description: 'Kami membutuhkan Backend Developer yang mahir menggunakan Golang untuk membangun arsitektur microservices yang scalable dan aman.'
     }
   ];
 
@@ -187,9 +195,11 @@ const CariLowongan = () => {
             
             {/* Toolbar Tambahan & Sorting */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-              <div>
-                <h2 className="text-lg font-bold text-slate-800">Menampilkan {filteredJobs.length} Lowongan</h2>
-                <p className="text-xs text-slate-500 mt-1">Sistem merekomendasikan loker dengan skor di atas 80%.</p>
+              <div className="w-full sm:w-auto flex flex-col sm:flex-row justify-between w-full">
+                  <div>
+                    <h2 className="text-lg font-bold text-slate-800">Menampilkan {filteredJobs.length} Lowongan</h2>
+                    <p className="text-xs text-slate-500 mt-1">Sistem merekomendasikan loker dengan skor di atas 80%.</p>
+                  </div>
               </div>
               
               <div className="flex gap-3 w-full sm:w-auto">
@@ -222,9 +232,9 @@ const CariLowongan = () => {
               {filteredJobs.map(job => (
                 <div key={job.id} className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 hover:shadow-md hover:border-blue-300 transition duration-300 group flex flex-col md:flex-row gap-6 relative">
                   
-                  {/* Badge AI Match Score (Absolute for Mobile, Static for Desktop) */}
+                  {/* Badge AI Match Score */}
                   <div className="absolute top-5 right-5 md:static md:shrink-0 flex flex-col items-center justify-center md:w-24 md:h-24 md:bg-slate-50 md:rounded-xl md:border md:border-slate-100">
-                    <p className="hidden md:block text-[10px] font-bold text-slate-400 uppercase mb-1">AI Match</p>
+                    <p className="hidden md:block text-[10px] font-bold text-slate-400 uppercase mb-1">Kecocokan Profil</p>
                     <div className="flex items-center gap-1.5 md:flex-col">
                       <span className={`text-sm md:text-2xl font-black ${job.matchScore >= 80 ? 'text-emerald-500' : job.matchScore >= 60 ? 'text-amber-500' : 'text-rose-500'}`}>
                         {job.matchScore}%
@@ -244,9 +254,10 @@ const CariLowongan = () => {
                       
                       {/* Job Info */}
                       <div>
-                        <Link to="#" className="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-blue-600 transition inline-block mb-1">
+                        {/* Judul dibuat bisa diklik untuk membuka modal */}
+                        <button onClick={() => setSelectedJob(job)} className="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-blue-600 transition inline-block mb-1 text-left">
                           {job.title}
-                        </Link>
+                        </button>
                         <p className="text-sm font-medium text-slate-600 mb-3">{job.company}</p>
                         
                         {/* Detail Tags */}
@@ -274,7 +285,7 @@ const CariLowongan = () => {
                     </div>
                   </div>
 
-                  {/* Actions */}
+                  {/* Actions (Terdapat penambahan tombol Detail) */}
                   <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center border-t md:border-t-0 border-slate-100 pt-4 md:pt-0 shrink-0 gap-3">
                     <span className="text-xs text-slate-400 font-medium">{job.postedAt}</span>
                     <div className="flex gap-2">
@@ -282,7 +293,15 @@ const CariLowongan = () => {
                         <i className="far fa-bookmark"></i>
                       </button>
                       
-                      {/* PERUBAHAN DI SINI: Mengubah button menjadi Link yang mengarah ke /upload */}
+                      {/* TOMBOL BARU: Detail */}
+                      <button 
+                        onClick={() => setSelectedJob(job)}
+                        className="px-4 h-10 bg-white border border-slate-300 text-slate-700 text-sm font-bold rounded-lg hover:bg-slate-50 transition shadow-sm flex items-center justify-center"
+                      >
+                        Detail
+                      </button>
+
+                      {/* TOMBOL LAMAR */}
                       <Link to="/upload" className="px-6 h-10 bg-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-700 transition shadow-sm flex items-center justify-center">
                         Lamar
                       </Link>
@@ -321,6 +340,135 @@ const CariLowongan = () => {
 
           </div>
         </div>
+
+        {/* MODAL DETAIL LOWONGAN */}
+        {selectedJob && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 backdrop-blur-sm bg-slate-900/60 transition-opacity">
+            <div className="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative">
+              
+              {/* Modal Header */}
+              <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 shrink-0">
+                <h3 className="text-lg font-bold text-slate-800 flex items-center">
+                  <i className="fas fa-briefcase mr-2 text-blue-600"></i> Detail Lowongan
+                </h3>
+                <button
+                  onClick={() => setSelectedJob(null)}
+                  className="text-slate-400 hover:text-slate-700 hover:bg-slate-200 w-8 h-8 rounded-full flex items-center justify-center transition"
+                >
+                  <i className="fas fa-times"></i>
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div className="p-6 overflow-y-auto custom-scrollbar flex-1 bg-white">
+                <div className="flex flex-col md:flex-row gap-6 mb-6">
+                  {/* Logo Perusahaan */}
+                  <div className={`w-20 h-20 rounded-2xl border flex items-center justify-center shrink-0 shadow-sm ${selectedJob.bgLogo}`}>
+                    <i className={`${selectedJob.logo} text-4xl`}></i>
+                  </div>
+                  
+                  {/* Judul & Info Dasar */}
+                  <div className="flex-1">
+                    <h2 className="text-2xl font-bold text-slate-900 mb-1">{selectedJob.title}</h2>
+                    <p className="text-base font-semibold text-blue-600 mb-4">{selectedJob.company}</p>
+                    
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+                      <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <p className="text-[10px] text-slate-400 font-bold uppercase mb-1">Lokasi</p>
+                        <p className="font-semibold text-slate-700 truncate">{selectedJob.location}</p>
+                      </div>
+                      <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <p className="text-[10px] text-slate-400 font-bold uppercase mb-1">Tipe</p>
+                        <p className="font-semibold text-slate-700 truncate">{selectedJob.type}</p>
+                      </div>
+                      <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <p className="text-[10px] text-slate-400 font-bold uppercase mb-1">Workplace</p>
+                        <p className="font-semibold text-slate-700 truncate">{selectedJob.workplace}</p>
+                      </div>
+                      <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <p className="text-[10px] text-slate-400 font-bold uppercase mb-1">Gaji</p>
+                        <p className="font-semibold text-emerald-600 truncate">{selectedJob.salary}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="w-full h-px bg-slate-200 my-6"></div>
+
+                <div className="flex flex-col md:flex-row gap-8">
+                  {/* Bagian Kiri: Deskripsi & Keahlian */}
+                  <div className="md:w-2/3 space-y-6">
+                    <div>
+                      <h4 className="text-base font-bold text-slate-900 mb-3">Deskripsi Pekerjaan</h4>
+                      <p className="text-sm text-slate-600 leading-relaxed text-justify">
+                        {selectedJob.description}
+                        <br/><br/>
+                        Sebagai bagian dari tim kami, Anda akan berkolaborasi dengan desainer, product manager, dan engineer lainnya untuk menciptakan produk yang inovatif. Kami mengutamakan budaya kerja yang fleksibel, kolaboratif, dan berorientasi pada hasil.
+                      </p>
+                    </div>
+
+                    <div>
+                      <h4 className="text-base font-bold text-slate-900 mb-3">Syarat Keahlian (Prioritas)</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedJob.skills.map((skill) => (
+                          <span key={skill} className="px-3 py-1.5 bg-blue-50 text-blue-700 border border-blue-100 rounded-lg text-sm font-semibold shadow-sm">
+                            <i className="fas fa-check-circle text-blue-400 mr-1.5"></i> {skill}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Bagian Kanan: Rekomendasi AI & Status */}
+                  <div className="md:w-1/3 space-y-4">
+                    <div className={`p-5 rounded-2xl border ${selectedJob.matchScore >= 80 ? 'bg-emerald-50 border-emerald-200' : selectedJob.matchScore >= 60 ? 'bg-amber-50 border-amber-200' : 'bg-rose-50 border-rose-200'}`}>
+                      <h4 className="text-xs font-bold uppercase tracking-wider mb-3 text-slate-500 flex items-center">
+                        <i className="fas fa-robot mr-2"></i> Analisis AI
+                      </h4>
+                      <div className="flex items-end gap-2 mb-2">
+                        <span className={`text-4xl font-black ${selectedJob.matchScore >= 80 ? 'text-emerald-600' : selectedJob.matchScore >= 60 ? 'text-amber-600' : 'text-rose-600'}`}>
+                          {selectedJob.matchScore}%
+                        </span>
+                        <span className="text-sm font-bold text-slate-500 mb-1">Kecocokan Profil</span>
+                      </div>
+                      <p className={`text-xs mt-2 ${selectedJob.matchScore >= 80 ? 'text-emerald-700' : selectedJob.matchScore >= 60 ? 'text-amber-700' : 'text-rose-700'}`}>
+                        {selectedJob.matchScore >= 80 
+                          ? "Sangat Direkomendasikan! Skill Anda sangat relevan dengan lowongan ini." 
+                          : selectedJob.matchScore >= 60 
+                          ? "Anda memenuhi beberapa kriteria. Tingkatkan peluang dengan mempelajari skill yang kurang." 
+                          : "Terdapat gap skill yang signifikan berdasarkan profil Anda saat ini."}
+                      </p>
+                    </div>
+
+                    <div className="p-4 rounded-xl border border-slate-200 bg-slate-50">
+                      <p className="text-xs font-semibold text-slate-500 mb-1">Diposting Pada</p>
+                      <p className="text-sm font-bold text-slate-800">{selectedJob.postedAt}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="px-6 py-4 border-t border-slate-200 bg-slate-50 shrink-0 flex justify-between items-center">
+                <button className="w-10 h-10 rounded-xl border border-slate-300 text-slate-400 hover:text-rose-500 hover:border-rose-300 hover:bg-rose-50 transition flex items-center justify-center bg-white shadow-sm" title="Simpan Lowongan">
+                  <i className="far fa-heart text-lg"></i>
+                </button>
+                
+                <div className="flex space-x-3 w-full sm:w-auto ml-3">
+                  <button
+                    onClick={() => setSelectedJob(null)}
+                    className="flex-1 sm:flex-none px-5 py-2.5 border border-slate-300 text-slate-700 rounded-xl text-sm font-bold hover:bg-white transition shadow-sm text-center"
+                  >
+                    Tutup
+                  </button>
+                  <Link to="/upload" className="flex-1 sm:flex-none px-6 py-2.5 bg-blue-600 text-white border border-blue-700 rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-sm text-center flex items-center justify-center">
+                    Lamar Sekarang <i className="fas fa-arrow-right ml-2"></i>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
