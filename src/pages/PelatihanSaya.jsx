@@ -5,18 +5,37 @@ import SidebarUser from '../components/SidebarUser';
 const PelatihanSaya = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [uploadedCerts, setUploadedCerts] = useState([]);
+  const [validatedSkills, setValidatedSkills] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
+
+  // Skenario simulasi upload (diurutkan untuk demo)
+  const dummyUploads = [
+    { name: 'Sertifikat_NextJS_Dicoding.pdf', skill: 'Next.js' },
+    { name: 'Sertifikat_TypeScript_Coursera.pdf', skill: 'TypeScript' },
+    { name: 'Sertifikat_Docker_Udemy.pdf', skill: 'Docker' }
+  ];
 
   // Fungsi simulasi upload sertifikat
   const handleUpload = (e) => {
     e.preventDefault();
+    if (uploadedCerts.length >= dummyUploads.length) {
+      alert("Semua sertifikat simulasi sudah diunggah untuk demo ini.");
+      return;
+    }
+
     setIsUploading(true);
-    // Simulasi delay upload
+    // Simulasi delay upload & validasi AI
     setTimeout(() => {
+      const nextUpload = dummyUploads[uploadedCerts.length];
+      
       setUploadedCerts([
         ...uploadedCerts, 
-        { id: Date.now(), name: 'Sertifikat_NextJS_Dicoding.pdf', date: 'Hari ini' }
+        { id: Date.now(), name: nextUpload.name, date: 'Hari ini' }
       ]);
+      
+      // Tambahkan skill yang tervalidasi ke dalam state
+      setValidatedSkills([...validatedSkills, nextUpload.skill]);
+      
       setIsUploading(false);
     }, 1500);
   };
@@ -27,7 +46,7 @@ const PelatihanSaya = () => {
       id: 'job-1',
       jobTitle: 'Frontend Web Developer',
       company: 'PT. Inovasi Digital (Dicoding)',
-      matchScore: 68,
+      baseMatchScore: 68,
       courses: [
         {
           id: 1,
@@ -55,7 +74,7 @@ const PelatihanSaya = () => {
       id: 'job-2',
       jobTitle: 'Backend Developer (Go)',
       company: 'Fintech Syariah',
-      matchScore: 78,
+      baseMatchScore: 78,
       courses: [
         {
           id: 3,
@@ -115,57 +134,115 @@ const PelatihanSaya = () => {
               {/* Kolom Kiri: Kategori Rekomendasi Berdasarkan Lamaran */}
               <div className="lg:col-span-2 space-y-8">
                 
-                {recommendationGroups.map((group) => (
-                  <div key={group.id} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                    {/* Header Grup Lamaran */}
-                    <div className="bg-slate-50 border-b border-slate-200 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Rekomendasi Untuk Lamaran:</p>
-                        <h2 className="text-base sm:text-lg font-bold text-slate-800">{group.jobTitle}</h2>
-                        <p className="text-xs text-slate-500"><i className="fas fa-building mr-1"></i> {group.company}</p>
-                      </div>
-                      <div className="shrink-0 flex items-center bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm">
-                        <span className="text-[10px] font-bold text-slate-400 mr-2 uppercase">Skor Saat Ini</span>
-                        <span className={`text-sm font-black ${group.matchScore >= 80 ? 'text-emerald-500' : 'text-amber-500'}`}>{group.matchScore}%</span>
-                      </div>
-                    </div>
+                {recommendationGroups.map((group) => {
+                  // === LOGIKA PROGRESS ===
+                  const totalCourses = group.courses.length;
+                  const completedCourses = group.courses.filter(course => validatedSkills.includes(course.targetSkill)).length;
+                  const remainingCourses = totalCourses - completedCourses;
+                  const progressPercentage = Math.round((completedCourses / totalCourses) * 100);
+                  
+                  // Hitung simulasi kenaikan Skor AI
+                  // (Misal: dari baseMatchScore 68 menuju 98 jika progress 100%)
+                  const maxPotentialScore = 98; 
+                  const currentScore = group.baseMatchScore + Math.round(((maxPotentialScore - group.baseMatchScore) * progressPercentage) / 100);
 
-                    {/* Daftar Kelas untuk Lamaran Tersebut */}
-                    <div className="p-5 space-y-4">
-                      {group.courses.map(course => (
-                        <div key={course.id} className="border border-slate-100 rounded-xl p-4 hover:border-blue-300 hover:shadow-md transition group/card cursor-pointer">
-                          <div className="flex flex-col sm:flex-row gap-4">
-                            
-                            <div className={`w-14 h-14 rounded-lg flex items-center justify-center shrink-0 ${course.logoBg} font-bold text-[10px] uppercase tracking-wider`}>
-                              {course.provider}
+                  return (
+                    <div key={group.id} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                      {/* Header Grup Lamaran */}
+                      <div className="bg-slate-50 border-b border-slate-200 p-5 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                        <div className="flex-1">
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Rekomendasi Untuk Lamaran:</p>
+                          <h2 className="text-base sm:text-lg font-bold text-slate-800">{group.jobTitle}</h2>
+                          <p className="text-xs text-slate-500 mb-3"><i className="fas fa-building mr-1"></i> {group.company}</p>
+                          
+                          {/* Progress Bar Area */}
+                          <div className="space-y-1.5 max-w-sm">
+                            <div className="flex justify-between text-[11px] font-bold">
+                              <span className="text-slate-600">Progress: {progressPercentage}%</span>
+                              <span className={remainingCourses === 0 ? "text-emerald-500" : "text-rose-500"}>
+                                {remainingCourses === 0 ? "Tuntas!" : `Sisa ${remainingCourses} Pelatihan`}
+                              </span>
                             </div>
-                            
-                            <div className="flex-1">
-                              <div className="flex justify-between items-start mb-1">
-                                <h3 className="font-bold text-slate-900 text-sm group-hover/card:text-blue-600 transition">{course.title}</h3>
-                                <span className="text-[9px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-100 whitespace-nowrap ml-2">
-                                  Gap: {course.targetSkill}
-                                </span>
-                              </div>
-                              
-                              <div className="flex items-center gap-4 mb-3 text-[11px] font-medium text-slate-500">
-                                <span className="flex items-center"><i className="fas fa-clock mr-1.5 text-slate-400"></i>{course.duration}</span>
-                                <span className="flex items-center"><i className="fas fa-signal mr-1.5 text-slate-400"></i>{course.level}</span>
-                              </div>
-
-                              <div className="flex items-center justify-between pt-3 border-t border-slate-50">
-                                <span className="text-[11px] font-black text-emerald-600">{course.price}</span>
-                                <button className="px-4 py-1.5 bg-blue-50 text-blue-600 text-xs font-bold rounded-lg hover:bg-blue-600 hover:text-white transition">
-                                  Lihat Kelas
-                                </button>
-                              </div>
+                            <div className="w-full bg-slate-200 rounded-full h-2">
+                              <div 
+                                className={`h-2 rounded-full transition-all duration-1000 ease-out ${progressPercentage === 100 ? 'bg-emerald-500' : 'bg-blue-600'}`} 
+                                style={{ width: `${progressPercentage}%` }}
+                              ></div>
                             </div>
                           </div>
+
                         </div>
-                      ))}
+                        
+                        <div className="shrink-0 flex items-center bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm">
+                          <span className="text-[10px] font-bold text-slate-400 mr-2 uppercase flex flex-col items-end">
+                            Skor Saat Ini
+                            {progressPercentage > 0 && <span className="text-emerald-500 text-[8px] animate-pulse">Naik +{currentScore - group.baseMatchScore}%</span>}
+                          </span>
+                          <span className={`text-2xl font-black ${currentScore >= 80 ? 'text-emerald-500' : 'text-amber-500'}`}>{currentScore}%</span>
+                        </div>
+                      </div>
+
+                      {/* Daftar Kelas untuk Lamaran Tersebut */}
+                      <div className="p-5 space-y-4">
+                        {group.courses.map(course => {
+                          const isCompleted = validatedSkills.includes(course.targetSkill);
+                          
+                          return (
+                            <div key={course.id} className={`border rounded-xl p-4 transition group/card ${isCompleted ? 'border-emerald-200 bg-emerald-50/30' : 'border-slate-100 hover:border-blue-300 hover:shadow-md cursor-pointer'}`}>
+                              <div className="flex flex-col sm:flex-row gap-4 items-center sm:items-start">
+                                
+                                <div className={`w-14 h-14 rounded-lg flex items-center justify-center shrink-0 ${isCompleted ? 'bg-emerald-100 text-emerald-600' : course.logoBg} font-bold text-[10px] uppercase tracking-wider`}>
+                                  {isCompleted ? <i className="fas fa-check text-xl"></i> : course.provider}
+                                </div>
+                                
+                                <div className="flex-1 w-full">
+                                  <div className="flex flex-col sm:flex-row justify-between sm:items-start mb-1 gap-2">
+                                    <h3 className={`font-bold text-sm ${isCompleted ? 'text-emerald-800' : 'text-slate-900 group-hover/card:text-blue-600'} transition`}>
+                                      {course.title}
+                                    </h3>
+                                    
+                                    {isCompleted ? (
+                                      <span className="text-[9px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded border border-emerald-200 whitespace-nowrap inline-flex items-center w-max">
+                                        <i className="fas fa-check-circle mr-1"></i> Skill Validated
+                                      </span>
+                                    ) : (
+                                      <span className="text-[9px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-100 whitespace-nowrap inline-flex items-center w-max">
+                                        Gap: {course.targetSkill}
+                                      </span>
+                                    )}
+                                  </div>
+                                  
+                                  <div className="flex items-center gap-4 mb-3 text-[11px] font-medium text-slate-500">
+                                    <span className="flex items-center"><i className="fas fa-clock mr-1.5 text-slate-400"></i>{course.duration}</span>
+                                    <span className="flex items-center"><i className="fas fa-signal mr-1.5 text-slate-400"></i>{course.level}</span>
+                                  </div>
+
+                                  <div className="flex items-center justify-between pt-3 border-t border-slate-50/50">
+                                    {isCompleted ? (
+                                      <span className="text-[11px] font-black text-emerald-600 opacity-0">Hidden</span> 
+                                    ) : (
+                                      <span className="text-[11px] font-black text-emerald-600">{course.price}</span>
+                                    )}
+                                    
+                                    {isCompleted ? (
+                                      <button disabled className="px-4 py-1.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-lg cursor-default border border-emerald-200">
+                                        Selesai
+                                      </button>
+                                    ) : (
+                                      <button className="px-4 py-1.5 bg-blue-50 text-blue-600 text-xs font-bold rounded-lg hover:bg-blue-600 hover:text-white transition">
+                                        Lihat Kelas
+                                      </button>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
 
               </div>
 
@@ -187,10 +264,10 @@ const PelatihanSaya = () => {
                           <p className="text-xs font-bold text-slate-500">Memverifikasi Sertifikat...</p>
                         </div>
                       ) : (
-                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
                           <i className="fas fa-cloud-upload-alt text-3xl text-slate-400 group-hover:text-blue-500 mb-2 transition"></i>
-                          <p className="text-xs font-semibold text-slate-600"><span className="text-blue-600">Klik untuk unggah</span> atau drag and drop</p>
-                          <p className="text-[10px] text-slate-400 mt-1">PDF, JPG, atau PNG (Maks. 2MB)</p>
+                          <p className="text-xs font-semibold text-slate-600"><span className="text-blue-600">Klik untuk unggah</span> sertifikat</p>
+                          <p className="text-[10px] text-slate-400 mt-1">Sistem akan otomatis membaca keahlian dari dokumen.</p>
                         </div>
                       )}
                       <input type="file" className="hidden" onChange={handleUpload} disabled={isUploading} />
@@ -208,7 +285,7 @@ const PelatihanSaya = () => {
                     ) : (
                       <div className="space-y-2">
                         {uploadedCerts.map(cert => (
-                          <div key={cert.id} className="flex items-center justify-between p-3 bg-emerald-50 border border-emerald-100 rounded-lg">
+                          <div key={cert.id} className="flex items-center justify-between p-3 bg-emerald-50 border border-emerald-100 rounded-lg animate-fade-in">
                             <div className="flex items-center overflow-hidden pr-2">
                               <i className="fas fa-file-alt text-emerald-500 mr-3 text-lg shrink-0"></i>
                               <div>

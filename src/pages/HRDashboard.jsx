@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 
 const HRDashboard = () => {
-  // State untuk navigasi antar tampilan: 'list' (daftar lowongan) atau 'pipeline' (detail pelamar)
+  // State untuk navigasi antar tampilan: 'list', 'pipeline', atau 'create'
   const [currentView, setCurrentView] = useState("list");
   const [selectedVacancy, setSelectedVacancy] = useState(null);
 
@@ -11,8 +11,8 @@ const HRDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
 
-  // Data Dummy Daftar Lowongan
-  const vacanciesData = [
+  // Data Dummy Daftar Lowongan (Dibuat State agar bisa ditambah lowongan baru)
+  const [vacancies, setVacancies] = useState([
     {
       id: 1,
       title: "Frontend Web Developer",
@@ -53,9 +53,9 @@ const HRDashboard = () => {
       aiRecommendations: 0,
       keywords: "Flutter, Dart, Firebase",
     }
-  ];
+  ]);
 
-  // Data Dummy Kandidat (Untuk simulasi, kita pakai data yang sama untuk setiap lowongan)
+  // Data Dummy Kandidat
   const candidatesData = [
     {
       id: 1,
@@ -102,17 +102,43 @@ const HRDashboard = () => {
       ),
   );
 
-  // Fungsi untuk membuka detail pipeline
+  // ================= Fungsi Navigasi =================
   const handleOpenPipeline = (vacancy) => {
     setSelectedVacancy(vacancy);
     setCurrentView("pipeline");
-    setSearchQuery(""); // Reset pencarian saat buka lowongan baru
+    setSearchQuery("");
   };
 
-  // Fungsi untuk kembali ke daftar lowongan
   const handleBackToList = () => {
     setCurrentView("list");
     setSelectedVacancy(null);
+  };
+
+  const handleOpenCreateForm = () => {
+    setCurrentView("create");
+    setSelectedVacancy(null);
+  };
+
+  // ================= Handle Form Submit (Simulasi) =================
+  const handleCreateVacancy = (e) => {
+    e.preventDefault();
+    // Ambil data dari form (Untuk demo, kita ambil title dan keyword secara sederhana)
+    const formData = new FormData(e.target);
+    const newVacancy = {
+      id: Date.now(),
+      title: formData.get('title'),
+      status: "Buka",
+      statusTheme: "emerald",
+      daysLeft: 30,
+      totalApplicants: 0,
+      aiRecommendations: 0,
+      keywords: formData.get('keywords'),
+    };
+
+    // Tambahkan ke state vacancies
+    setVacancies([newVacancy, ...vacancies]);
+    // Kembali ke list
+    setCurrentView("list");
   };
 
   return (
@@ -125,13 +151,12 @@ const HRDashboard = () => {
         ></div>
       )}
 
-      {/* Sidebar B2B */}
       <Sidebar />
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col h-full overflow-hidden relative bg-slate-50">
         
-        {/* Header (Responsive) */}
+        {/* Header */}
         <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-8 shrink-0 z-10">
           <div className="flex items-center">
             <button
@@ -141,7 +166,7 @@ const HRDashboard = () => {
               <i className="fas fa-bars text-xl"></i>
             </button>
 
-            {/* Dinamis Breadcrumbs */}
+            {/* Breadcrumbs */}
             <div className="hidden sm:flex items-center text-sm font-medium text-slate-500">
               <button 
                 onClick={handleBackToList}
@@ -158,11 +183,18 @@ const HRDashboard = () => {
                   </span>
                 </>
               )}
+
+              {currentView === 'create' && (
+                <>
+                  <i className="fas fa-chevron-right mx-2 text-[10px] text-slate-300"></i>
+                  <span className="text-slate-900 font-bold">Buat Lowongan Baru</span>
+                </>
+              )}
             </div>
 
             {/* Judul singkat di HP */}
             <span className="sm:hidden text-slate-900 font-bold text-sm truncate max-w-[150px]">
-              {currentView === 'list' ? 'Kelola Lowongan' : selectedVacancy?.title}
+              {currentView === 'list' ? 'Kelola Lowongan' : currentView === 'create' ? 'Buat Lowongan' : selectedVacancy?.title}
             </span>
           </div>
 
@@ -173,10 +205,17 @@ const HRDashboard = () => {
                 <span>Ekspor Data</span>
               </button>
             )}
-            <button className="px-3 py-2 sm:px-4 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition shadow-sm border border-blue-700 flex items-center">
-              <i className="fas fa-plus sm:mr-2"></i>
-              <span className="hidden sm:inline">Buat Lowongan</span>
-            </button>
+            
+            {/* Tombol Buat Lowongan (Sembunyikan jika sedang di form create) */}
+            {currentView !== 'create' && (
+              <button 
+                onClick={handleOpenCreateForm}
+                className="px-3 py-2 sm:px-4 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition shadow-sm border border-blue-700 flex items-center"
+              >
+                <i className="fas fa-plus sm:mr-2"></i>
+                <span className="hidden sm:inline">Buat Lowongan</span>
+              </button>
+            )}
           </div>
         </header>
 
@@ -203,7 +242,7 @@ const HRDashboard = () => {
 
               {/* Grid Lowongan */}
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {vacanciesData.map((vacancy) => (
+                {vacancies.map((vacancy) => (
                   <div key={vacancy.id} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition flex flex-col h-full">
                     <div className="flex justify-between items-start mb-4">
                       <span className={`px-2.5 py-1 bg-${vacancy.statusTheme}-50 text-${vacancy.statusTheme}-700 border border-${vacancy.statusTheme}-200 rounded text-[10px] font-bold uppercase tracking-wide`}>
@@ -246,12 +285,10 @@ const HRDashboard = () => {
           )}
 
           {/* =========================================
-              VIEW 2: PIPELINE KANDIDAT (DETAIL VIEW)
+              VIEW 2: FORM BUAT LOWONGAN (CREATE VIEW)
               ========================================= */}
-          {currentView === 'pipeline' && selectedVacancy && (
-            <div className="animate-fade-in">
-              
-              {/* Tombol Kembali (Mobile Friendly) */}
+          {currentView === 'create' && (
+            <div className="max-w-4xl mx-auto animate-fade-in">
               <button 
                 onClick={handleBackToList}
                 className="mb-4 text-sm font-bold text-slate-500 hover:text-blue-600 transition flex items-center"
@@ -259,7 +296,118 @@ const HRDashboard = () => {
                 <i className="fas fa-arrow-left mr-2"></i> Kembali ke Daftar
               </button>
 
-              {/* Job Detail Header */}
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div className="px-6 py-5 border-b border-slate-200 bg-slate-50 flex items-center">
+                  <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mr-4">
+                    <i className="fas fa-briefcase text-lg"></i>
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-bold text-slate-900">Informasi Lowongan Baru</h2>
+                    <p className="text-xs text-slate-500">Lengkapi detail lowongan untuk mulai mencari kandidat terbaik.</p>
+                  </div>
+                </div>
+
+                <form onSubmit={handleCreateVacancy} className="p-6 sm:p-8 space-y-6">
+                  {/* Grid 2 Kolom */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-slate-700">Posisi / Jabatan Pekerjaan <span className="text-red-500">*</span></label>
+                      <input 
+                        type="text" 
+                        name="title"
+                        required
+                        placeholder="Contoh: Frontend Developer" 
+                        className="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm bg-slate-50 focus:bg-white"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-slate-700">Tipe Pekerjaan <span className="text-red-500">*</span></label>
+                      <select className="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm bg-slate-50 focus:bg-white appearance-none">
+                        <option>Full-time</option>
+                        <option>Part-time</option>
+                        <option>Contract</option>
+                        <option>Internship</option>
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-slate-700">Sistem Kerja <span className="text-red-500">*</span></label>
+                      <select className="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm bg-slate-50 focus:bg-white appearance-none">
+                        <option>On-site</option>
+                        <option>Hybrid</option>
+                        <option>Remote</option>
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-slate-700">Lokasi Penempatan</label>
+                      <input 
+                        type="text" 
+                        placeholder="Contoh: Jakarta Selatan" 
+                        className="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm bg-slate-50 focus:bg-white"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-slate-700">Deskripsi Pekerjaan <span className="text-red-500">*</span></label>
+                    <textarea 
+                      rows="4"
+                      required
+                      placeholder="Jelaskan peran, tanggung jawab, dan kualifikasi yang dibutuhkan..." 
+                      className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm bg-slate-50 focus:bg-white"
+                    ></textarea>
+                  </div>
+
+                  {/* Pengaturan AI */}
+                  <div className="p-5 rounded-xl border border-blue-100 bg-blue-50/50 space-y-4">
+                    <h3 className="text-sm font-bold text-blue-900 flex items-center">
+                      <i className="fas fa-robot text-blue-600 mr-2"></i> Konfigurasi AI Auto-Screening
+                    </h3>
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-slate-700">Keyword Prioritas (Pisahkan dengan koma) <span className="text-red-500">*</span></label>
+                      <p className="text-xs text-slate-500 mb-2">AI akan menggunakan keyword ini untuk memberikan skor kecocokan pada CV pelamar.</p>
+                      <input 
+                        type="text" 
+                        name="keywords"
+                        required
+                        placeholder="Contoh: React, TypeScript, UI/UX, Figma" 
+                        className="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm bg-white"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="pt-6 border-t border-slate-200 flex flex-col sm:flex-row justify-end gap-3">
+                    <button 
+                      type="button"
+                      onClick={handleBackToList}
+                      className="px-6 py-2.5 bg-white border border-slate-300 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50 transition shadow-sm order-2 sm:order-1"
+                    >
+                      Batal
+                    </button>
+                    <button 
+                      type="submit"
+                      className="px-6 py-2.5 bg-blue-600 text-white border border-blue-700 rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-sm flex items-center justify-center order-1 sm:order-2"
+                    >
+                      <i className="fas fa-save mr-2"></i> Simpan & Publikasikan
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* =========================================
+              VIEW 3: PIPELINE KANDIDAT (DETAIL VIEW)
+              ========================================= */}
+          {currentView === 'pipeline' && selectedVacancy && (
+            <div className="animate-fade-in">
+              <button 
+                onClick={handleBackToList}
+                className="mb-4 text-sm font-bold text-slate-500 hover:text-blue-600 transition flex items-center"
+              >
+                <i className="fas fa-arrow-left mr-2"></i> Kembali ke Daftar
+              </button>
+
               <div className="bg-white rounded-xl border border-slate-200 p-5 sm:p-6 shadow-sm mb-6 flex flex-col md:flex-row justify-between md:items-center">
                 <div>
                   <div className="flex flex-wrap items-center gap-2 mb-2">
@@ -285,20 +433,12 @@ const HRDashboard = () => {
 
                 <div className="flex space-x-6 sm:space-x-8 mt-5 md:mt-0 border-t md:border-t-0 md:border-l border-slate-200 pt-4 md:pt-0 md:pl-8">
                   <div>
-                    <p className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-                      Total Pelamar
-                    </p>
-                    <p className="text-2xl sm:text-3xl font-black text-slate-800">
-                      {selectedVacancy.totalApplicants}
-                    </p>
+                    <p className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Total Pelamar</p>
+                    <p className="text-2xl sm:text-3xl font-black text-slate-800">{selectedVacancy.totalApplicants}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-                      Rekomendasi AI (&gt;80%)
-                    </p>
-                    <p className="text-2xl sm:text-3xl font-black text-blue-600">
-                      {selectedVacancy.aiRecommendations}
-                    </p>
+                    <p className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Rekomendasi AI (&gt;80%)</p>
+                    <p className="text-2xl sm:text-3xl font-black text-blue-600">{selectedVacancy.aiRecommendations}</p>
                   </div>
                 </div>
               </div>
@@ -330,7 +470,6 @@ const HRDashboard = () => {
                   </div>
                 </div>
 
-                {/* Table */}
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse min-w-[800px]">
                     <thead>
@@ -344,17 +483,10 @@ const HRDashboard = () => {
                     </thead>
                     <tbody className="divide-y divide-slate-100 text-sm">
                       {filteredCandidates.map((candidate) => (
-                        <tr
-                          key={candidate.id}
-                          className={`hover:bg-slate-50/80 transition group cursor-pointer ${candidate.isPersona ? "bg-slate-50/50" : ""}`}
-                        >
+                        <tr key={candidate.id} className={`hover:bg-slate-50/80 transition group cursor-pointer ${candidate.isPersona ? "bg-slate-50/50" : ""}`}>
                           <td className="px-6 py-4">
                             <div className="flex items-center">
-                              <img
-                                src={candidate.avatar}
-                                alt={candidate.name}
-                                className={`w-10 h-10 rounded-full mr-3 border border-slate-200 shadow-sm shrink-0 ${candidate.isPersona ? "grayscale-[20%]" : ""}`}
-                              />
+                              <img src={candidate.avatar} alt={candidate.name} className={`w-10 h-10 rounded-full mr-3 border border-slate-200 shadow-sm shrink-0 ${candidate.isPersona ? "grayscale-[20%]" : ""}`} />
                               <div>
                                 <p className="font-bold text-slate-800">{candidate.name}</p>
                                 <p className="text-xs text-slate-500 mt-0.5 group-hover:text-blue-600 transition truncate max-w-[150px] sm:max-w-none">
@@ -365,17 +497,13 @@ const HRDashboard = () => {
                           </td>
                           <td className="px-6 py-4 text-center">
                             <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full border-[3px] bg-${candidate.statusTheme}-50 shadow-sm opacity-90 ${candidate.score >= 90 ? "border-emerald-500" : candidate.score >= 80 ? "border-blue-400" : "border-amber-400"}`}>
-                              <span className={`font-bold text-sm ${candidate.score >= 90 ? "text-emerald-700" : candidate.score >= 80 ? "text-blue-700" : "text-amber-700"}`}>
-                                {candidate.score}%
-                              </span>
+                              <span className={`font-bold text-sm ${candidate.score >= 90 ? "text-emerald-700" : candidate.score >= 80 ? "text-blue-700" : "text-amber-700"}`}>{candidate.score}%</span>
                             </div>
                           </td>
                           <td className="px-6 py-4">
                             <div className={`flex flex-wrap gap-1.5 ${candidate.isPersona ? "opacity-80" : ""}`}>
                               {candidate.skills.map((skill) => (
-                                <span key={skill} className="px-2 py-1 bg-white border border-slate-200 text-slate-600 rounded text-xs font-semibold shadow-sm whitespace-nowrap">
-                                  {skill}
-                                </span>
+                                <span key={skill} className="px-2 py-1 bg-white border border-slate-200 text-slate-600 rounded text-xs font-semibold shadow-sm whitespace-nowrap">{skill}</span>
                               ))}
                             </div>
                           </td>
@@ -385,16 +513,12 @@ const HRDashboard = () => {
                             </span>
                           </td>
                           <td className="px-6 py-4 text-center">
-                            <button
-                              onClick={() => setSelectedCandidate(candidate)}
-                              className="text-blue-600 font-bold hover:text-blue-800 text-sm px-4 py-2 border border-transparent hover:border-blue-200 hover:bg-blue-50 rounded-lg transition inline-block"
-                            >
+                            <button onClick={() => setSelectedCandidate(candidate)} className="text-blue-600 font-bold hover:text-blue-800 text-sm px-4 py-2 border border-transparent hover:border-blue-200 hover:bg-blue-50 rounded-lg transition inline-block">
                               Review
                             </button>
                           </td>
                         </tr>
                       ))}
-
                       {filteredCandidates.length === 0 && (
                         <tr>
                           <td colSpan="5" className="px-6 py-10 text-center text-slate-500">
@@ -405,23 +529,6 @@ const HRDashboard = () => {
                       )}
                     </tbody>
                   </table>
-                </div>
-
-                <div className="p-4 border-t border-slate-200 bg-slate-50 flex flex-col sm:flex-row items-center justify-between text-sm text-slate-500 space-y-3 sm:space-y-0">
-                  <span className="font-medium text-center sm:text-left">
-                    Menampilkan <span className="text-slate-900 font-bold">1-{filteredCandidates.length}</span> dari <span className="text-slate-900 font-bold">{selectedVacancy.totalApplicants}</span> pelamar
-                  </span>
-                  <div className="flex space-x-1.5">
-                    <button className="px-3 py-1 rounded border border-slate-300 hover:bg-white disabled:opacity-50 transition shadow-sm bg-white" disabled>
-                      <i className="fas fa-chevron-left text-xs"></i>
-                    </button>
-                    <button className="px-3 py-1 rounded border border-blue-600 bg-blue-50 text-blue-700 font-bold shadow-sm">1</button>
-                    <button className="px-3 py-1 rounded border border-slate-300 hover:bg-slate-100 bg-white font-medium shadow-sm transition">2</button>
-                    <span className="px-2 py-1 font-bold text-slate-400 hidden sm:inline">...</span>
-                    <button className="px-3 py-1 rounded border border-slate-300 hover:bg-white shadow-sm bg-white transition">
-                      <i className="fas fa-chevron-right text-xs"></i>
-                    </button>
-                  </div>
                 </div>
               </div>
             </div>
@@ -440,10 +547,7 @@ const HRDashboard = () => {
                 <h3 className="text-lg font-bold text-slate-800 flex items-center">
                   <i className="fas fa-address-card mr-2 text-blue-600"></i> Detail Profil Pelamar
                 </h3>
-                <button
-                  onClick={() => setSelectedCandidate(null)}
-                  className="text-slate-400 hover:text-slate-700 hover:bg-slate-200 w-8 h-8 rounded-full flex items-center justify-center transition"
-                >
+                <button onClick={() => setSelectedCandidate(null)} className="text-slate-400 hover:text-slate-700 hover:bg-slate-200 w-8 h-8 rounded-full flex items-center justify-center transition">
                   <i className="fas fa-times"></i>
                 </button>
               </div>
@@ -451,11 +555,7 @@ const HRDashboard = () => {
               <div className="p-6 overflow-y-auto custom-scrollbar flex-1 bg-white">
                 <div className="flex flex-col md:flex-row gap-8">
                   <div className="md:w-1/3 flex flex-col items-center text-center space-y-4">
-                    <img 
-                      src={selectedCandidate.avatar} 
-                      alt={selectedCandidate.name} 
-                      className={`w-32 h-32 rounded-full border-4 border-slate-100 shadow-md ${selectedCandidate.isPersona ? "grayscale-[20%]" : ""}`} 
-                    />
+                    <img src={selectedCandidate.avatar} alt={selectedCandidate.name} className={`w-32 h-32 rounded-full border-4 border-slate-100 shadow-md ${selectedCandidate.isPersona ? "grayscale-[20%]" : ""}`} />
                     <div>
                       <h2 className="text-xl font-bold text-slate-900">{selectedCandidate.name}</h2>
                       <p className="text-sm font-medium text-slate-500 mt-1">
@@ -468,9 +568,7 @@ const HRDashboard = () => {
                     <div className="flex flex-col items-center">
                       <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Match Score AI</p>
                       <div className={`flex flex-col items-center justify-center w-24 h-24 rounded-full border-[5px] shadow-sm bg-${selectedCandidate.statusTheme}-50 ${selectedCandidate.score >= 90 ? 'border-emerald-500' : selectedCandidate.score >= 80 ? 'border-blue-400' : 'border-amber-400'}`}>
-                        <span className={`text-3xl font-black ${selectedCandidate.score >= 90 ? 'text-emerald-700' : selectedCandidate.score >= 80 ? 'text-blue-700' : 'text-amber-700'}`}>
-                          {selectedCandidate.score}%
-                        </span>
+                        <span className={`text-3xl font-black ${selectedCandidate.score >= 90 ? 'text-emerald-700' : selectedCandidate.score >= 80 ? 'text-blue-700' : 'text-amber-700'}`}>{selectedCandidate.score}%</span>
                       </div>
                     </div>
                   </div>
@@ -484,9 +582,7 @@ const HRDashboard = () => {
                         <div className="flex items-start">
                           <i className={`fas ${selectedCandidate.statusIcon} text-${selectedCandidate.statusTheme}-600 mt-0.5 mr-3 text-lg`}></i>
                           <div>
-                            <p className={`text-sm font-bold text-${selectedCandidate.statusTheme}-800 mb-1`}>
-                              {selectedCandidate.status}
-                            </p>
+                            <p className={`text-sm font-bold text-${selectedCandidate.statusTheme}-800 mb-1`}>{selectedCandidate.status}</p>
                             <p className={`text-xs text-${selectedCandidate.statusTheme}-700 leading-relaxed`}>
                               Berdasarkan parsing dokumen, kandidat ini memiliki kecocokan <strong>{selectedCandidate.score}%</strong> terhadap kriteria prioritas "{selectedVacancy?.keywords}".
                             </p>
@@ -528,18 +624,9 @@ const HRDashboard = () => {
               </div>
 
               <div className="px-6 py-4 border-t border-slate-200 bg-slate-50 shrink-0 flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3">
-                <button
-                  onClick={() => setSelectedCandidate(null)}
-                  className="px-5 py-2.5 border border-slate-300 text-slate-700 rounded-xl text-sm font-bold hover:bg-white transition shadow-sm w-full sm:w-auto text-center"
-                >
-                  Tutup
-                </button>
-                <button className="px-5 py-2.5 bg-rose-50 text-rose-600 border border-rose-200 rounded-xl text-sm font-bold hover:bg-rose-100 transition shadow-sm w-full sm:w-auto text-center">
-                  <i className="fas fa-times mr-2"></i> Tolak
-                </button>
-                <button className="px-5 py-2.5 bg-blue-600 text-white border border-blue-700 rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-sm w-full sm:w-auto text-center">
-                  <i className="fas fa-envelope-open-text mr-2"></i> Loloskan & Undang
-                </button>
+                <button onClick={() => setSelectedCandidate(null)} className="px-5 py-2.5 border border-slate-300 text-slate-700 rounded-xl text-sm font-bold hover:bg-white transition shadow-sm w-full sm:w-auto text-center">Tutup</button>
+                <button className="px-5 py-2.5 bg-rose-50 text-rose-600 border border-rose-200 rounded-xl text-sm font-bold hover:bg-rose-100 transition shadow-sm w-full sm:w-auto text-center"><i className="fas fa-times mr-2"></i> Tolak</button>
+                <button className="px-5 py-2.5 bg-blue-600 text-white border border-blue-700 rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-sm w-full sm:w-auto text-center"><i className="fas fa-envelope-open-text mr-2"></i> Loloskan & Undang</button>
               </div>
             </div>
           </div>
