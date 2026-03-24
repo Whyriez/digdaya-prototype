@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import Sidebar from '../components/Sidebar';
 
 const SkillGapAnalytics = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -16,44 +17,7 @@ const SkillGapAnalytics = () => {
       )}
 
       {/* Sidebar B2B */}
-      <aside className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-white border-r border-slate-200 flex flex-col transition-transform duration-300 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 shadow-2xl lg:shadow-[4px_0_24px_rgba(0,0,0,0.02)]`}>
-        <div className="h-16 flex items-center justify-between px-6 border-b border-slate-100">
-          <Link to="/" className="flex items-center hover:opacity-80 transition">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3 shadow-sm shadow-blue-200">
-              <i className="fas fa-layer-group text-white text-sm"></i>
-            </div>
-            <span className="text-xl font-extrabold text-slate-900 tracking-tight">SkillSync <span className="text-blue-600">HR</span></span>
-          </Link>
-          <button className="lg:hidden text-slate-400 hover:text-rose-500 transition text-lg" onClick={() => setIsSidebarOpen(false)}>
-            <i className="fas fa-times"></i>
-          </button>
-        </div>
-
-        <nav className="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
-          <p className="px-2 text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Menu Utama</p>
-          <Link to="/hr" className="flex items-center px-3 py-2.5 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg group transition">
-            <i className="fas fa-briefcase w-5 h-5 mr-3 text-center text-slate-400 group-hover:text-blue-500 transition"></i>
-            <span className="font-medium text-sm">Kelola Lowongan</span>
-          </Link>
-          
-          <Link to="/talent-pool" className="flex items-center px-3 py-2.5 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg group transition">
-            <i className="fas fa-users w-5 h-5 mr-3 text-center text-slate-400 group-hover:text-blue-500 transition"></i>
-            <span className="font-medium text-sm">Talent Pool (Database)</span>
-          </Link>
-          
-          {/* Menu Aktif */}
-          <Link to="/skill-gap" className="flex items-center px-3 py-2.5 bg-blue-50 text-blue-700 rounded-lg group transition border border-blue-100">
-            <i className="fas fa-chart-line w-5 h-5 mr-3 text-center"></i>
-            <span className="font-semibold text-sm">Analitik Skill Gap</span>
-          </Link>
-          
-          <p className="px-2 text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 mt-8">Pengaturan</p>
-          <Link to="/ats-config" className="flex items-center px-3 py-2.5 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg group transition">
-            <i className="fas fa-cog w-5 h-5 mr-3 text-center text-slate-400 group-hover:text-slate-600 transition"></i>
-            <span className="font-medium text-sm">Konfigurasi ATS & API</span>
-          </Link>
-        </nav>
-      </aside>
+      <Sidebar />
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col h-full overflow-hidden relative bg-slate-50">

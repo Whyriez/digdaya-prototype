@@ -17,7 +17,7 @@ const LoginPage = () => {
     // Simulasi loading jaringan agar terasa nyata
     setTimeout(() => {
       if (username === 'user' && password === 'user123') {
-        navigate('/candidate');
+        navigate('/user-dashboard');
       } else if (username === 'hr' && password === 'hr123') {
         navigate('/hr');
       } else {

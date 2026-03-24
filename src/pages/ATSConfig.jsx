@@ -29,21 +29,7 @@ const ATSConfig = () => {
       )}
 
       {/* Sidebar B2B */}
-      <aside className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-white border-r border-slate-200 flex flex-col transition-transform duration-300 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 shadow-2xl lg:shadow-[4px_0_24px_rgba(0,0,0,0.02)]`}>
-        <div className="h-16 flex items-center justify-between px-6 border-b border-slate-100">
-          <Link to="/" className="flex items-center hover:opacity-80 transition">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3 shadow-sm shadow-blue-200">
-              <i className="fas fa-layer-group text-white text-sm"></i>
-            </div>
-            <span className="text-xl font-extrabold text-slate-900 tracking-tight">SkillSync <span className="text-blue-600">HR</span></span>
-          </Link>
-          <button className="lg:hidden text-slate-400 hover:text-rose-500 transition text-lg" onClick={() => setIsSidebarOpen(false)}>
-            <i className="fas fa-times"></i>
-          </button>
-        </div>
-
-        <Sidebar />
-      </aside>
+      <Sidebar />
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col h-full overflow-hidden relative bg-slate-50">

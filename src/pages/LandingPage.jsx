@@ -37,7 +37,7 @@ const LandingPage = () => {
               Masuk
             </Link>
             <Link
-              to="/upload"
+              to="/login"
               className="px-5 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition shadow-sm"
             >
               Mulai Analisis CV
@@ -71,8 +71,9 @@ const LandingPage = () => {
                 hitungan detik.
               </p>
               <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+                {/* PERUBAHAN DI SINI: Mengarah ke versi public */}
                 <Link
-                  to="/upload"
+                  to="/cari-lowongan-public"
                   className="px-6 py-3.5 bg-blue-600 text-white text-sm font-bold rounded-xl hover:bg-blue-700 transition shadow-md shadow-blue-200 text-center flex items-center justify-center"
                 >
                   <i className="fas fa-user-graduate mr-2"></i> Saya Pencari
