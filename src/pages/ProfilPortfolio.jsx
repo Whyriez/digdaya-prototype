@@ -100,8 +100,11 @@ const ProfilPortofolio = () => {
             </div>
 
             {/* Kelengkapan Profil (Profile Strength) */}
-            <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-2xl border border-blue-100 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
+            <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-2xl border border-blue-100 p-6 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm relative overflow-hidden">
+              {/* Dekorasi AI Sparkles */}
+              <i className="fas fa-wand-magic-sparkles absolute -left-4 -bottom-4 text-[100px] text-blue-500/10 pointer-events-none"></i>
+              
+              <div className="flex items-center gap-4 relative z-10">
                 <div className="relative w-14 h-14 flex items-center justify-center shrink-0">
                   <svg className="w-full h-full transform -rotate-90">
                     <circle cx="28" cy="28" r="24" stroke="currentColor" strokeWidth="4" fill="transparent" className="text-blue-100" />
@@ -110,12 +113,14 @@ const ProfilPortofolio = () => {
                   <span className="absolute text-sm font-black text-blue-700">85%</span>
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-800 text-sm">Kekuatan Profil Anda: <span className="text-blue-600">Sangat Baik</span></h3>
-                  <p className="text-xs text-slate-500 mt-1">Tambahkan setidaknya 1 sertifikasi dari modul pelatihan untuk mencapai 100% dan memikat HRD.</p>
+                  <h3 className="font-bold text-slate-800 text-sm flex items-center">
+                    Kekuatan Profil Anda: <span className="text-blue-600 ml-1">Sangat Baik</span>
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-1">Selesaikan rekomendasi <span className="font-bold text-blue-600">Saran AI</span> di bagian pengalaman untuk mencapai 100%.</p>
                 </div>
               </div>
-              <Link to="/pelatihan" className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 transition shadow-sm whitespace-nowrap text-center">
-                Tambah Sertifikat
+              <Link to="/pelatihan" className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 transition shadow-sm whitespace-nowrap text-center relative z-10">
+                Lihat Rekomendasi
               </Link>
             </div>
 
@@ -177,26 +182,10 @@ const ProfilPortofolio = () => {
                         <span className="px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold rounded">Docker</span>
                       </div>
                     </div>
-
-                    <hr className="border-slate-100" />
-
-                    {/* Project 3 */}
-                    <div className="group/item">
-                      <div className="flex justify-between items-start mb-1">
-                        <h3 className="font-bold text-slate-800 text-base group-hover/item:text-blue-600 transition">Unity Dash Stats</h3>
-                        <a href="#" className="text-slate-400 hover:text-blue-600"><i className="fas fa-external-link-alt text-xs"></i></a>
-                      </div>
-                      <p className="text-xs font-semibold text-slate-500 mb-2">Januari - Februari 2026</p>
-                      <p className="text-sm text-slate-600 mb-3 leading-relaxed">Mengembangkan aplikasi analitik khusus untuk memantau performa dan metrik monetisasi dari Unity Ads. Bertanggung jawab atas optimalisasi proses build dan visualisasi data matriks.</p>
-                      <div className="flex gap-2">
-                        <span className="px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold rounded">Mobile Dev</span>
-                        <span className="px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold rounded">Data Analytics</span>
-                      </div>
-                    </div>
                   </div>
                 </div>
 
-                {/* 4. Pengalaman Organisasi / Kerja */}
+                {/* 4. Pengalaman Organisasi / Kerja (DENGAN AI FEEDBACK) */}
                 <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm relative group">
                   <div className="flex justify-between items-center mb-6">
                     <h2 className="text-lg font-bold text-slate-800">Pengalaman</h2>
@@ -205,15 +194,55 @@ const ProfilPortofolio = () => {
                     </button>
                   </div>
 
-                  <div className="space-y-6 border-l-2 border-slate-100 ml-3 pl-5 relative">
+                  <div className="space-y-8 border-l-2 border-slate-100 ml-3 pl-5 relative">
                     
-                    {/* Exp 1 */}
+                    {/* Exp 1 DENGAN FITUR IMPACT NARRATIVE AI */}
                     <div className="relative">
                       <div className="absolute -left-[29px] top-1 w-4 h-4 bg-white border-4 border-blue-500 rounded-full"></div>
-                      <h3 className="font-bold text-slate-800 text-base">Tribe Representative</h3>
+                      <h3 className="font-bold text-slate-800 text-base flex justify-between">
+                        Tribe Representative
+                        <button className="text-slate-400 hover:text-blue-600"><i className="fas fa-pencil-alt text-xs"></i></button>
+                      </h3>
                       <p className="text-sm font-medium text-slate-700 mb-1">MSIB Batch VII - Bangkit Academy</p>
                       <p className="text-xs text-slate-400 mb-2">Februari 2024</p>
-                      <p className="text-sm text-slate-600">Bertindak sebagai perwakilan grup (Tribe) dalam program intensif pengembangan talenta digital. Mengoordinasikan komunikasi antar anggota tim dan memastikan penyelesaian tugas serta target pembelajaran tepat waktu.</p>
+                      
+                      <p className="text-sm text-slate-600 mb-3 leading-relaxed">
+                        Bertindak sebagai perwakilan grup (Tribe) dalam program intensif pengembangan talenta digital. 
+                        {/* Kalimat Pasif yang Di-Highlight AI */}
+                        <span className="bg-rose-100/60 border-b-2 border-rose-300 text-slate-800 cursor-help ml-1 px-1 py-0.5 rounded transition hover:bg-rose-200" title="AI mendeteksi narasi pasif tanpa metrik kuantitatif.">
+                          Mengoordinasikan komunikasi antar anggota tim dan memastikan penyelesaian tugas tepat waktu.
+                        </span>
+                      </p>
+
+                      {/* AI Suggestion Box (Inline Profile Edit) */}
+                      <div className="bg-gradient-to-r from-blue-50/50 to-indigo-50/50 border border-blue-200 rounded-xl p-4 shadow-sm relative overflow-hidden group/ai mt-2">
+                        <div className="absolute top-0 right-0 bg-blue-600 text-white text-[9px] font-bold px-2 py-1 rounded-bl-lg flex items-center shadow-sm">
+                          <i className="fas fa-wand-magic-sparkles mr-1.5"></i> AI Copilot
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+                            <i className="fas fa-lightbulb"></i>
+                          </div>
+                          <div>
+                            <h4 className="text-xs font-bold text-slate-800 mb-1">Saran Peningkatan (Impact Narrative)</h4>
+                            <p className="text-[11px] text-slate-500 mb-2">Tambahkan data pencapaian pada kalimat yang disorot untuk meningkatkan peluang lolos ATS sebesar <span className="text-emerald-600 font-bold">+8%</span>.</p>
+                            
+                            <div className="bg-white border border-blue-100 rounded-lg p-3 text-sm text-slate-700 font-medium shadow-[0_2px_10px_rgb(0,0,0,0.02)] mb-3 relative">
+                              "Mengoordinasikan komunikasi untuk <span className="bg-emerald-100 text-emerald-800 px-1 rounded font-bold">15+ anggota tim</span>, meningkatkan penyelesaian tugas tepat waktu <span className="bg-emerald-100 text-emerald-800 px-1 rounded font-bold">sebesar 30%</span>."
+                            </div>
+                            
+                            <div className="flex gap-2">
+                              <button className="text-[11px] px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition shadow-sm flex items-center">
+                                <i className="fas fa-check mr-1.5"></i> Gunakan Saran AI
+                              </button>
+                              <button className="text-[11px] px-4 py-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-600 font-bold rounded-lg transition shadow-sm">
+                                Abaikan
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
                     </div>
 
                     {/* Exp 2 */}

@@ -17,11 +17,12 @@ const AIParsing = () => {
         }
         const newProgress = oldProgress + 1;
         
-        // Mengubah status checklist berdasarkan progress
-        if (newProgress < 30) setStep(1);
-        else if (newProgress < 70) setStep(2);
-        else if (newProgress < 100) setStep(3);
-        else setStep(4); // Selesai
+        // Mengubah status checklist berdasarkan progress (dibagi 4 langkah)
+        if (newProgress < 25) setStep(1);
+        else if (newProgress < 50) setStep(2);
+        else if (newProgress < 75) setStep(3);
+        else if (newProgress < 100) setStep(4); // Langkah baru: LLM
+        else setStep(5); // Selesai
 
         return newProgress;
       });
@@ -144,7 +145,7 @@ const AIParsing = () => {
                         {progress === 100 ? 'Analisis Selesai' : 'Menganalisis Profil...'}
                       </h2>
                       <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
-                        {progress === 100 ? 'Data siap untuk ditinjau.' : 'Mengekstrak keterampilan dan pengalaman kerja.'}
+                        {progress === 100 ? 'Data siap untuk ditinjau.' : 'Mengekstrak keterampilan dan mengevaluasi narasi.'}
                       </p>
                     </div>
                   </div>
@@ -177,13 +178,27 @@ const AIParsing = () => {
 
                     {/* Step 3: Cosine Similarity */}
                     <div className={`flex items-start relative ${step < 3 ? 'opacity-40' : ''}`}>
-                      <div className={`absolute left-3 -top-5 bottom-8 w-px -z-10 ${step >= 3 ? 'bg-emerald-200' : 'bg-slate-200'}`}></div>
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center mt-0.5 shrink-0 border ${progress === 100 ? 'bg-emerald-100 border-emerald-200' : step === 3 ? 'bg-blue-100 border-blue-200' : 'bg-slate-50 border-slate-200 border-2'}`}>
-                        {progress === 100 ? <i className="fas fa-check text-emerald-600 text-[10px]"></i> : step === 3 ? <i className="fas fa-circle-notch fa-spin text-blue-600 text-[10px]"></i> : null}
+                      <div className={`absolute left-3 -top-5 bottom-8 w-px -z-10 ${step >= 4 ? 'bg-emerald-200' : 'bg-slate-200'}`}></div>
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center mt-0.5 shrink-0 border ${step > 3 || progress === 100 ? 'bg-emerald-100 border-emerald-200' : step === 3 ? 'bg-blue-100 border-blue-200' : 'bg-slate-50 border-slate-200 border-2'}`}>
+                        {step > 3 || progress === 100 ? <i className="fas fa-check text-emerald-600 text-[10px]"></i> : step === 3 ? <i className="fas fa-circle-notch fa-spin text-blue-600 text-[10px]"></i> : null}
                       </div>
                       <div className="ml-4">
-                        <h4 className={`text-sm font-bold ${step === 3 && progress < 100 ? 'text-blue-700' : 'text-slate-800'}`}>Kalkulasi Cosine Similarity</h4>
+                        <h4 className={`text-sm font-bold ${step === 3 ? 'text-blue-700' : 'text-slate-800'}`}>Kalkulasi Cosine Similarity</h4>
                         <p className="text-xs text-slate-500 mt-1">Menghitung skor kecocokan dengan data latih industri.</p>
+                      </div>
+                    </div>
+
+                    {/* --- Step 4 BARU: Evaluasi Narasi Impact LLM --- */}
+                    <div className={`flex items-start relative ${step < 4 ? 'opacity-40' : ''}`}>
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center mt-0.5 shrink-0 border ${progress === 100 ? 'bg-emerald-100 border-emerald-200' : step === 4 ? 'bg-indigo-100 border-indigo-200 text-indigo-600' : 'bg-slate-50 border-slate-200 border-2'}`}>
+                        {progress === 100 ? <i className="fas fa-check text-emerald-600 text-[10px]"></i> : step === 4 ? <i className="fas fa-wand-magic-sparkles fa-beat text-[10px]"></i> : null}
+                      </div>
+                      <div className="ml-4">
+                        <h4 className={`text-sm font-bold ${step === 4 && progress < 100 ? 'text-indigo-700' : 'text-slate-800'} flex items-center`}>
+                          Evaluasi Narasi Impact (LLM)
+                          {step === 4 && progress < 100 && <span className="ml-2 px-1.5 py-0.5 bg-indigo-100 text-indigo-700 text-[8px] uppercase tracking-wider rounded font-bold">Memproses</span>}
+                        </h4>
+                        <p className="text-xs text-slate-500 mt-1">Mendeteksi ketiadaan metrik kuantitatif pada pengalaman kerja Anda.</p>
                       </div>
                     </div>
 

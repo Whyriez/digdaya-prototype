@@ -55,7 +55,7 @@ const CandidateDashboard = () => {
             <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between">
               <div>
                 <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Dashboard Simulasi ATS</h1>
-                <p className="text-slate-500 text-sm mt-1">Umpan balik real-time menggunakan NLP (TF-IDF & Cosine Similarity).</p>
+                <p className="text-slate-500 text-sm mt-1">Umpan balik real-time menggunakan NLP (TF-IDF) & Analisis LLM.</p>
               </div>
               <div className="mt-4 md:mt-0 px-4 py-2 bg-white border border-slate-200 rounded-lg shadow-sm flex items-center text-sm font-medium text-slate-600">
                 <i className="fas fa-clock text-blue-500 mr-2"></i> Diperbarui: Hari ini, 14:30 WITA
@@ -207,6 +207,63 @@ const CandidateDashboard = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* --- BAGIAN BARU: AI Impact Narrative Feedback --- */}
+                <div className="bg-gradient-to-br from-white to-blue-50/50 rounded-2xl border border-blue-100 p-6 sm:p-8 shadow-sm relative overflow-hidden">
+                  <div className="absolute -top-4 -right-4 p-4 opacity-[0.03] pointer-events-none">
+                    <i className="fas fa-wand-magic-sparkles text-[120px] text-blue-900"></i>
+                  </div>
+                  
+                  <div className="flex items-center justify-between mb-2 relative z-10">
+                    <h2 className="font-bold text-slate-800 text-lg flex items-center">
+                      <i className="fas fa-wand-magic-sparkles text-blue-500 mr-2.5"></i> Evaluasi Narasi Impact 
+                      <span className="ml-3 px-2 py-0.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[9px] font-bold uppercase tracking-wider rounded-full shadow-sm">
+                        LLM AI
+                      </span>
+                    </h2>
+                  </div>
+                  <p className="text-sm text-slate-500 mb-6 relative z-10">AI mendeteksi kalimat pengalaman kerja Anda yang ditulis secara pasif. Perbaiki narasi menjadi kuantitatif (metrik) untuk meningkatkan valuasi dokumen Anda.</p>
+
+                  <div className="space-y-4 relative z-10">
+                    {/* Kotak Before - After */}
+                    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                      <div className="flex flex-col md:flex-row">
+                        
+                        {/* Before (Pasif) */}
+                        <div className="flex-1 p-4 md:p-5 border-b md:border-b-0 md:border-r border-slate-100 bg-rose-50/30">
+                          <div className="flex items-center text-[10px] font-bold text-rose-600 mb-2.5 uppercase tracking-wider">
+                            <i className="fas fa-times-circle mr-1.5 text-sm"></i> Ditulis di CV Saat Ini (Pasif)
+                          </div>
+                          <p className="text-sm text-slate-700 italic">"Mengoordinasikan komunikasi antar anggota tim dan memastikan penyelesaian tugas tepat waktu."</p>
+                        </div>
+
+                        {/* After (Saran AI) */}
+                        <div className="flex-1 p-4 md:p-5 bg-emerald-50/30 relative">
+                          <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-white border border-slate-200 rounded-full items-center justify-center text-slate-400 hidden md:flex shadow-sm">
+                            <i className="fas fa-arrow-right text-[10px]"></i>
+                          </div>
+                          <div className="flex items-center text-[10px] font-bold text-emerald-600 mb-2.5 uppercase tracking-wider">
+                            <i className="fas fa-check-circle mr-1.5 text-sm"></i> Saran AI (Kuantitatif)
+                          </div>
+                          <p className="text-sm text-slate-800 font-medium leading-relaxed">
+                            "Mengoordinasikan komunikasi untuk <span className="bg-emerald-200/60 text-emerald-800 px-1 rounded font-bold">15+ anggota tim</span>, meningkatkan penyelesaian tugas tepat waktu <span className="bg-emerald-200/60 text-emerald-800 px-1 rounded font-bold">sebesar 30%</span>."
+                          </p>
+                        </div>
+                      </div>
+                      
+                      {/* Action Bar */}
+                      <div className="bg-slate-50 px-5 py-3.5 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <span className="text-xs font-medium text-slate-500">
+                          Estimasi Kenaikan Skor: <span className="font-black text-emerald-600 ml-1">+8%</span>
+                        </span>
+                        <button className="text-xs px-4 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition shadow-sm flex items-center justify-center">
+                          <i className="fas fa-magic mr-2"></i> Terapkan ke CV
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/* --- AKHIR BAGIAN BARU --- */}
 
                 {/* Mitra Pelatihan (Affiliate Model) */}
                 <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm">
